@@ -1,36 +1,13 @@
 import { createRoot } from 'react-dom/client'
-// import { CacheProvider } from '@emotion/react'
-// import createCache from '@emotion/cache'
 import './index.css'
 import ChatWidget from './components/ChatWidget.tsx'
 import { createTheme, MantineProvider } from '@mantine/core'
 // import AppDemo from './components/demo/AppDemo.tsx'
 
-// import mantineCss from "@mantine/core/styles.css?inline";
-// import widgetCss from "./index.css?inline";
-
-// function injectStyles(shadowRoot: ShadowRoot) {
-//   const style = document.createElement("style");
-
-//   style.textContent = `
-//     :host {
-//       all: initial;
-//       font-family: system-ui, sans-serif;
-//     }
-
-//     *, *::before, *::after {
-//       box-sizing: border-box;
-//     }
-
-//     ${mantineCss}
-//   `;
-
-//   shadowRoot.appendChild(style);
-// }
-
 declare global {
   interface Window {
     OfficeMateChatbotConfig?: {
+      shadowRoot?: ShadowRoot
       mountChatbot: (embedToken: string, apiUrl: string) => void
       unmountChatbot: () => void
 
@@ -49,16 +26,16 @@ declare global {
 //   )
 // }
 
-const host = document.createElement('div')
-const shadow = host.attachShadow({ mode: 'open' })
-
 const appContainer = document.createElement('div')
 const root = createRoot(appContainer)
 
 function mountChatbot(embedToken: string, apiUrl: string) {
   // injectStyles(shadowRoot);
-
-  document.body.appendChild(host)
+  const shadowRoot = window.OfficeMateChatbotConfig?.shadowRoot
+  if (!shadowRoot) {
+    console.error("Shadow root not found. Please initialize the chatbot container first.");
+    return;
+  } 
 
   appContainer.setAttribute('data-mantine-color-scheme', 'light')
   appContainer.style.position = "fixed"
@@ -66,12 +43,7 @@ function mountChatbot(embedToken: string, apiUrl: string) {
   appContainer.style.right = "20px"
   appContainer.style.zIndex = "999999"
   appContainer.id = "officemate-chatbot-container";
-  shadow.appendChild(appContainer)
-
-  const link = document.createElement("link")
-  link.rel = "stylesheet"
-  link.href = "http://localhost:3000/widget.css"
-  shadow.appendChild(link)
+  shadowRoot.appendChild(appContainer)
 
   const resetStyle = document.createElement("style");
   resetStyle.textContent = `
@@ -84,7 +56,7 @@ function mountChatbot(embedToken: string, apiUrl: string) {
       box-sizing: border-box;
     }
   `;
-  shadow.appendChild(resetStyle);
+  shadowRoot.appendChild(resetStyle);
 
   // emotion cache -> inject CSS vào shadow DOM
   // const cache = createCache({
@@ -106,6 +78,7 @@ function unmountChatbot() {
 }
 
 window.OfficeMateChatbotConfig = {
+  ...window.OfficeMateChatbotConfig,
   mountChatbot,
   unmountChatbot,
   createNewSession: () => {
