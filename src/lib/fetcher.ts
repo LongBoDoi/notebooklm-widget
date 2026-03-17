@@ -6,8 +6,6 @@ export type FetcherOptions = {
   signal?: AbortSignal
 }
 
-const BASE_URL = 'https://api.vts-dasc.net'
-
 export async function originFetcher(
   endpoint: string,
   options: FetcherOptions = {}
@@ -18,7 +16,7 @@ export async function originFetcher(
 
   const { headers, body, method, ...rest } = options
 
-  const res = await fetch(`${BASE_URL}${endpoint}`, {
+  const res = await fetch(`${endpoint}`, {
     method: method || 'GET',
     // credentials: isProduction ? 'include' : 'same-origin',
     headers: {
