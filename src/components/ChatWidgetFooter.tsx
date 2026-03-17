@@ -179,12 +179,12 @@ export default function ChatWidgetFooter() {
       />
 
       {isTyping ? 
-        <SquareIcon weight='fill' className={cn(`cursor-pointer mb-2.5 flex-shrink-0`)} onClick={stopStream} 
+        <SquareIcon weight='fill' className={cn(`cursor-pointer mb-2.5 flex-shrink-0 text-blue-500`)} onClick={stopStream} 
           style={{
             color: config?.theme?.primaryColor
           }}
         />
-      : <PaperPlaneRightIcon weight="fill" className={cn(`cursor-pointer mb-2.5 flex-shrink-0`)} onClick={() => sendMessage(message)} 
+      : <PaperPlaneRightIcon weight="fill" className={cn(`cursor-pointer mb-2.5 flex-shrink-0 text-blue-500`)} onClick={() => sendMessage(message)} 
           style={{
             color: config?.theme?.primaryColor
           }}

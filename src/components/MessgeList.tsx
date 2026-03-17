@@ -5,13 +5,15 @@ import { useEffect, useRef } from 'react'
 import { Button, Center, ScrollArea, Transition } from '@mantine/core'
 import { useConfig } from '../context/config-context'
 import { useElementSize, useInViewport } from '@mantine/hooks'
+import useConversationsStore from '../stores/conversations.store'
+import { api } from '../lib/axios'
 
 export default function MessageList() {
-  const { messages, loading, enableScrollToBottom, isTyping } =
+  const { messages, loading, enableScrollToBottom, isTyping, resetStore, setMessages } =
     useMessagesStore()
   const {config} = useConfig()
 
-  // const selectedConversationId = useConversationsStore((s) => s.selectedConversationId)
+  const {selectedConversationId} = useConversationsStore()
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -25,13 +27,31 @@ export default function MessageList() {
     }
   }, [loading])
 
-  // useEffect(() => {
-  //   resetStore()
+  useEffect(() => {
+    resetStore()
 
-  //   if (selectedConversationId) {
-  //     loadMoreMessages()
-  //   }
-  // }, [selectedConversationId])
+    if (selectedConversationId) {
+      api.get(`https://api.vts-dasc.net/deployment-messages`, {
+        params: {
+          conversationId: selectedConversationId,
+          length: 100
+        }
+      }).then((res) => setMessages(res.data.results.flatMap((msg: any) => [
+                  {
+                    ...msg,
+                    clientId: crypto.randomUUID(),
+                    role: 'user' as const,
+                    content: msg.userMessage ?? '',
+                  },
+                  {
+                    ...msg,
+                    clientId: crypto.randomUUID(),
+                    role: 'assistant' as const,
+                    content: msg.assistantMessage ?? '',
+                  },
+                ])))
+    }
+  }, [selectedConversationId])
 
   // useEffect(() => {
   //   if (scrollMessageId) {
@@ -67,7 +87,6 @@ export default function MessageList() {
 
   return (
     <ScrollArea.Autosize
-      className='flex-grow-1 flex flex-col items-center relative'
       scrollHideDelay={0}
       scrollbarSize={8}
       type='auto'
@@ -75,7 +94,7 @@ export default function MessageList() {
       // onScrollEndCapture={() => (autoScroll.current = false)}
       // threshold={10}
     >
-      <div className="flex flex-col gap-2 p-4 relative" 
+      <div className="flex flex-col gap-2 p-4 relative w-full" 
       ref={viewportRef}>
         {config?.welcomeMessage && <MessageItem
           message={{

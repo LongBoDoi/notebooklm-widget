@@ -1,13 +1,21 @@
-import { Button, Container } from "@mantine/core";
+import { Button, Container, Divider } from "@mantine/core";
 import ScriptEmbed from "./ScriptEmbed";
 import ChatDemo from "./ChatDemo";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import ConversationList from "./ConversationList";
 
 export default function AppDemo() {
     const queryClient = new QueryClient();
 
     return <QueryClientProvider client={queryClient}>
         <Container className="py-10 flex flex-col gap-10">
+
+        <ConversationList />
+
+        <ChatDemo />
+
+        <Divider />
+
         <ScriptEmbed />
 
         <div>
@@ -24,7 +32,6 @@ export default function AppDemo() {
             </Button>
         </div>
 
-        <ChatDemo />
     </Container>
     </QueryClientProvider>
 }
