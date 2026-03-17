@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import ChatWidget from './components/ChatWidget.tsx'
 import { createTheme, MantineProvider } from '@mantine/core'
+import AppDemo from './components/demo/AppDemo.tsx'
 // import AppDemo from './components/demo/AppDemo.tsx'
 
 // import mantineCss from "@mantine/core/styles.css?inline";
@@ -39,15 +40,14 @@ declare global {
   }
 }
 
-// const rootDom = document.getElementById('root')
-// if (rootDom) {
-//   createRoot(rootDom).render(
-//     <MantineProvider>
-//       <AppDemo />
-//       <ChatWidget embedToken='820b4e80-a92c-4ea8-aadf-aa7b7a27b402' apiUrl='https://api.vts-dasc.net' />
-//     </MantineProvider>,
-//   )
-// }
+const rootDom = document.getElementById('root')
+if (rootDom) {
+  createRoot(rootDom).render(
+    <MantineProvider>
+      <AppDemo />
+    </MantineProvider>,
+  )
+}
 
 const host = document.createElement('div')
 const shadow = host.attachShadow({ mode: 'open' })

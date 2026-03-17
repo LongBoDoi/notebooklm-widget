@@ -77,7 +77,7 @@ export default function MessageList() {
     >
       <div className="flex flex-col gap-2 p-4 relative" 
       ref={viewportRef}>
-        {config.welcomeMessage && <MessageItem
+        {config?.welcomeMessage && <MessageItem
           message={{
             role: 'assistant',
             content: config.welcomeMessage
@@ -98,7 +98,7 @@ export default function MessageList() {
         <Transition transition="slide-up" mounted={inViewport}>
           {(transitionStyles) => (
             
-            <Button color={config.theme.primaryColor} leftSection={<CaretDoubleDownIcon weight="bold" />} onClick={() => scrollToBottom('smooth')} style={transitionStyles}
+            <Button color={config?.theme?.primaryColor} leftSection={<CaretDoubleDownIcon weight="bold" />} onClick={() => scrollToBottom('smooth')} style={transitionStyles}
             className='!text-white'>
               Đi tới hiện tại
             </Button>

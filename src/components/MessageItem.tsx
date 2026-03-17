@@ -11,6 +11,7 @@ import { Avatar, Loader } from '@mantine/core'
 import { MessageMarkdownRenderer } from './markdown/MessageMarkdownRenderer'
 import { useConfig } from '../context/config-context'
 import { BlurhashImage } from './BlurhashImage'
+import type { WidgetConfig } from '../services/widget.service'
 
 interface MessageItemProps {
   message: ChatMessage
@@ -43,7 +44,11 @@ export default function MessageItem({ message }: MessageItemProps) {
   // )
 
   // const [openFeedbackDialog, setOpenFeedbackDialog] = useState<boolean>(false)
-  const {config} = useConfig()
+  const {config = {
+    theme: {
+      primaryColor: '#228be6'
+    }
+  }as WidgetConfig} = useConfig()
 
   const renderMessageContent = (content: string, isTyping: boolean) => {
     if (isTyping) {

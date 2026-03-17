@@ -1,10 +1,13 @@
 import { Button, Container } from "@mantine/core";
 import ScriptEmbed from "./ScriptEmbed";
+import ChatDemo from "./ChatDemo";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 export default function AppDemo() {
+    const queryClient = new QueryClient();
 
-
-    return <Container className="py-10 flex flex-col gap-10">
+    return <QueryClientProvider client={queryClient}>
+        <Container className="py-10 flex flex-col gap-10">
         <ScriptEmbed />
 
         <div>
@@ -20,5 +23,8 @@ export default function AppDemo() {
                 Khởi động lại
             </Button>
         </div>
+
+        <ChatDemo />
     </Container>
+    </QueryClientProvider>
 }

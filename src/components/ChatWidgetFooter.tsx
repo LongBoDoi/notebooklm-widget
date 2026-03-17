@@ -2,16 +2,15 @@ import { Textarea } from '@mantine/core'
 import { PaperPlaneRightIcon, SquareIcon } from '@phosphor-icons/react'
 import { useConfig } from '../context/config-context'
 import { cn } from '../lib/utils'
-import { WidgetService } from '../services/widget.service'
-import { LocalStorageKey } from '../constants/LocalStorageKey'
 import type { ChatMessage } from '../types/message.type'
 import { useChatStream } from '../hooks/useChatStream'
 import useConversationsStore from '../stores/conversations.store'
 import useMessagesStore from '../stores/messages.store'
 import { useInputState } from '@mantine/hooks'
+import { WidgetService } from '../services/widget-demo.service'
 
 export default function ChatWidgetFooter() {
-  const { config, embedToken, apiUrl } = useConfig()
+  const { config, apiUrl } = useConfig()
 
   const [message, setMessage] = useInputState('')
   
@@ -62,11 +61,10 @@ export default function ChatWidgetFooter() {
 
     try {
       const response = await WidgetService.sendMessage(
-        apiUrl,
+        'https://api.vts-dasc.net',
         text.trim(),
-        localStorage.getItem(LocalStorageKey.SESSION_ID) || '',
         abortController.signal,
-        embedToken,
+        conversationId
       )
 
       setMessage('')
@@ -144,8 +142,8 @@ export default function ChatWidgetFooter() {
   return (
     <div className={cn(`py-2 px-4`, `border-t flex items-end gap-2`)}
       style={{
-        backgroundColor: `${config.theme.primaryColor}1A`,
-        borderColor: `${config.theme.primaryColor}`,
+        backgroundColor: `${config?.theme?.primaryColor}1A`,
+        borderColor: `${config?.theme?.primaryColor}`,
       }}
     >
       <Textarea
@@ -162,7 +160,7 @@ export default function ChatWidgetFooter() {
         styles={
           {
             input: {
-              '--input-bd-focus': config.theme.primaryColor,
+              '--input-bd-focus': config?.theme?.primaryColor,
             }
           }
         }
@@ -183,12 +181,12 @@ export default function ChatWidgetFooter() {
       {isTyping ? 
         <SquareIcon weight='fill' className={cn(`cursor-pointer mb-2.5 flex-shrink-0`)} onClick={stopStream} 
           style={{
-            color: config.theme.primaryColor
+            color: config?.theme?.primaryColor
           }}
         />
       : <PaperPlaneRightIcon weight="fill" className={cn(`cursor-pointer mb-2.5 flex-shrink-0`)} onClick={() => sendMessage(message)} 
           style={{
-            color: config.theme.primaryColor
+            color: config?.theme?.primaryColor
           }}
         />}
     </div>
