@@ -93,6 +93,7 @@ export default function MessageItem({ message }: MessageItemProps) {
         style={{
           backgroundColor: message.role === 'user' ? config.theme.primaryColor : undefined,
           borderColor: message.role === 'assistant' ? config.theme.primaryColor : undefined,
+          maxWidth: '60%'
         }}
         id={`message-${message.clientId}`}
       >
