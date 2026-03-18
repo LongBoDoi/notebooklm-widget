@@ -49,9 +49,11 @@ function MainContent() {
         }
       />
     </Menu.Target>
-    <Menu.Dropdown className={`absolute border text-foreground rounded-md !w-sm !h-[400px] border shadow-lg !p-0 overflow-hidden flex flex-col !shadow-lg`}
+    <Menu.Dropdown className={`absolute border text-foreground rounded-md border shadow-lg !p-0 overflow-hidden flex flex-col !shadow-lg`}
       style={{
         borderColor: config.theme.primaryColor,
+        width: config.theme.width || 320,
+        height: config.theme.height || 450,
       }}
     >
       <ChatWidgetHeader onClose={close} />
