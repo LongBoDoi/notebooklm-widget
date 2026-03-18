@@ -86,7 +86,7 @@ export default function MessageItem({ message }: MessageItemProps) {
 
       <div
         className={cn(
-          `flex flex-col gap-2 px-4 py-2 rounded-xl max-w-[70%]`,
+          `flex flex-col gap-2 px-4 py-2 rounded-xl max-w-[60%]`,
           message.role === 'user' && `text-white font-medium rounded-tr-none`,
           message.role === 'assistant' && `rounded-tl-none border`,
         )}

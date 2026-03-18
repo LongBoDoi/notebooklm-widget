@@ -20,6 +20,8 @@ export const ConfigProvider = ({ children, embedToken, apiUrl }: { children: Rea
       if (!data.theme) {
         data.theme = {
           primaryColor: '#ef0604',
+          width: 320,
+          height: 450
         }
       }
       return data

@@ -10,6 +10,8 @@ export interface WidgetConfig {
   position: 'BOTTOM_RIGHT' | 'BOTTOM_LEFT'
   theme: {
     primaryColor: string
+    width: number
+    height: number
   }
 }
 
