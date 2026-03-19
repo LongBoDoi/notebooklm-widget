@@ -9,6 +9,7 @@ import { useChatStream } from '../hooks/useChatStream'
 import useConversationsStore from '../stores/conversations.store'
 import useMessagesStore from '../stores/messages.store'
 import { useInputState } from '@mantine/hooks'
+import { v4 as uuid } from 'uuid'
 
 export default function ChatWidgetFooter() {
   const { config, embedToken, apiUrl } = useConfig()
@@ -41,7 +42,7 @@ export default function ChatWidgetFooter() {
     startStream(abortController)
 
     const userMessage: ChatMessage = {
-      clientId: crypto.randomUUID(),
+      clientId: uuid(),
       role: 'user',
       content: text.trim(),
     }
@@ -49,7 +50,7 @@ export default function ChatWidgetFooter() {
     addUserMessage(userMessage)
 
     const emptyAssistantMessage: ChatMessage = {
-      clientId: crypto.randomUUID(),
+      clientId: uuid(),
       role: 'assistant',
       content: '',
       typing: true,
