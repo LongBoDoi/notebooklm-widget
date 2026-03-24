@@ -5,25 +5,22 @@ import { WidgetService, type WidgetConfig } from '../services/widget.service'
 interface ConfigContextType {
   config: WidgetConfig
   embedToken: string
-  apiUrl: string
 }
 
 const ConfigContext = createContext<ConfigContextType>({} as ConfigContextType)
 export const useConfig = () => useContext<ConfigContextType>(ConfigContext)
 
-export const ConfigProvider = ({ children, embedToken, apiUrl }: { children: ReactNode, embedToken: string, apiUrl: string }) => {
+export const ConfigProvider = ({ children, embedToken }: { children: ReactNode, embedToken: string}) => {
   const configQuery = useQuery({
     queryKey: ['widget-config', embedToken],
     enabled: !!embedToken,
     queryFn: async () => {
-      const data = await WidgetService.getConfig(apiUrl, embedToken)
-      if (!data.theme) {
-        data.theme = {
-          primaryColor: '#ef0604',
-          width: 320,
-          height: 450
-        }
+      const data = await WidgetService.getConfig(embedToken)
+
+      if (data.position === 'BOTTOM_LEFT') {
+        window.parent.postMessage({ type: 'SET_IFRAME_STYLE', style: { position: 'fixed', bottom: '20px', left: '20px', right: 'unset' } }, '*')
       }
+
       return data
     },
   })
@@ -32,8 +29,7 @@ export const ConfigProvider = ({ children, embedToken, apiUrl }: { children: Rea
     <ConfigContext.Provider
       value={{
         config: configQuery.data || {} as WidgetConfig,
-        embedToken,
-        apiUrl
+        embedToken
       }}
     >
       {configQuery.isSuccess && configQuery.data && children}

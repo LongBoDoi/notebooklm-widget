@@ -1,29 +1,26 @@
 import { RobotIcon, XIcon } from '@phosphor-icons/react'
 import { useConfig } from '../context/config-context'
-import type { WidgetConfig } from '../services/widget.service'
 import { Box } from '@mantine/core'
 import { BlurhashImage } from './BlurhashImage'
 import { cn } from '../lib/utils'
 
 export default function ChatWidgetHeader(props: { onClose?: () => void }) {
   const {
-    config = {
-      avatarUrl: '',
-      title: 'Chatbot',
-      theme: {
-        primaryColor: '#ef0604',
-      },
-    } as WidgetConfig,
+    config
   } = useConfig()
 
   return (
-    <Box bg={config.theme?.primaryColor} className="px-4 py-2 gap-2 flex items-center text-white shadow-xl border-b border-white">
+    <Box className="px-4 py-2 gap-2 flex items-center text-white shadow-xl border-b border-white bg-gradient-to-r from-[var(--widget-primary-color)] to-[var(--widget-secondary-color)]"
+      style={{
+        '--widget-primary-color': config.theme.primaryColor,
+        '--widget-secondary-color': config.theme.secondaryColor
+      }}
+    >
       {config.avatarUrl ? 
         <BlurhashImage
-          className={cn("w-8 h-8 rounded-full overflow-hidden border")}
+          className={cn("w-8 h-8 rounded-full overflow-hidden")}
           ratio={1}
           blurhash={config.avatarUrl}
-          style={{ borderColor: config.theme.primaryColor }}
         />
        : (
         <RobotIcon
@@ -34,7 +31,11 @@ export default function ChatWidgetHeader(props: { onClose?: () => void }) {
           }}
         />
       )}
-      <span className="font-bold">{config.title}</span>
+      <span className="font-bold" style={
+        {
+          color: config.theme.titleTextColor
+        }
+      }>{config.title}</span>
 
       <XIcon
         className={`flex-shrink-0 p-1 cursor-pointer rounded-full ml-auto transition-all`}

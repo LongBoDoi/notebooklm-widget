@@ -5,8 +5,10 @@ import useConversationsStore from "../stores/conversations.store";
 import type { Conversation } from "../types/conversation.type";
 import useMessagesStore from "../stores/messages.store";
 import { useConfig } from "./config-context";
+import { useMutation } from "@tanstack/react-query";
 
 interface SessionContextType {
+    creatingNewSession: boolean
 }
 
 const SessionContext = createContext<SessionContextType>({} as SessionContextType)
@@ -16,50 +18,66 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
     const {setSelectedConversation, setSelectedConversationId} = useConversationsStore()
     const {setMessages} = useMessagesStore()
 
-    const { embedToken, apiUrl } = useConfig()
+    const { embedToken } = useConfig()
 
-    const createNewSession = async () => {
-        localStorage.removeItem(LocalStorageKey.SESSION_ID)
-        localStorage.removeItem(LocalStorageKey.EMBED_TOKEN)
-        setSelectedConversation(null)
-        setSelectedConversationId(null)
-        setMessages([])
+    const createNewSessionMutation = useMutation({
+        mutationFn: async () => {
+            const data = await WidgetService.createConversation(embedToken)
+            return data
+        },
+        onSuccess: (data) => {
+            setSelectedConversation(data)
+            setSelectedConversationId(data.id)
 
-        const data = await WidgetService.createConversation(apiUrl, embedToken)
-        setSelectedConversation(data)
-        setSelectedConversationId(data.id)
+            localStorage.setItem(LocalStorageKey.SESSION_ID, data.sessionId)
+            localStorage.setItem(LocalStorageKey.EMBED_TOKEN, embedToken)
 
-        localStorage.setItem(LocalStorageKey.SESSION_ID, data.sessionId)
-        localStorage.setItem(LocalStorageKey.EMBED_TOKEN, embedToken)
-    }
+            setMessages([])
+        },
+        onError: () => {
+            console.error('OfficeMate Chatbot Agent: Có lỗi xảy ra khi tạo phiên mới. Vui lòng thử lại!')
+        }
+    })
 
     useEffect(() => {
-        if (window.OfficeMateChatbotConfig) {
-            window.OfficeMateChatbotConfig.createNewSession = createNewSession
+        function handleMessage(event: MessageEvent) {
+            if (event.data?.type === 'CREATE_NEW_SESSION') {
+                createNewSessionMutation.mutate()
+            }
         }
 
-        const sessionId = localStorage.getItem(LocalStorageKey.SESSION_ID)
-        const embedToken = localStorage.getItem(LocalStorageKey.EMBED_TOKEN)
+        window.addEventListener('message', handleMessage)
 
-        if (!embedToken || embedToken !== embedToken) {
-            createNewSession()
+        const sessionId = localStorage.getItem(LocalStorageKey.SESSION_ID)
+        const storedEmbedToken = localStorage.getItem(LocalStorageKey.EMBED_TOKEN)
+
+        if (!embedToken || embedToken !== storedEmbedToken) {
+            createNewSessionMutation.mutate()
             return
         }
 
         if (sessionId) {
-            WidgetService.getChatHistory(apiUrl, sessionId, embedToken).then((data) => {
+            WidgetService.getChatHistory(sessionId, embedToken).then((data) => {
                 setSelectedConversation({
                     id: data.conversationId
                 } as Conversation)
                 setSelectedConversationId(data.conversationId)
                 setMessages(data.messages)
             }).catch(() => {
-                createNewSession()
+                createNewSessionMutation.mutate()
             })
         } else {
-            createNewSession()
+            createNewSessionMutation.mutate()
+        }
+
+        return () => {
+            window.removeEventListener('message', handleMessage)
         }
     }, [])
 
-    return children
+    return (
+        <SessionContext.Provider value={{ creatingNewSession: createNewSessionMutation.isPending }}>
+            {children}
+        </SessionContext.Provider>
+    )
 }

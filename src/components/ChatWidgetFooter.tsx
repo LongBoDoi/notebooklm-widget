@@ -1,4 +1,4 @@
-import { Textarea } from '@mantine/core'
+import { Box, Textarea } from '@mantine/core'
 import { PaperPlaneRightIcon, SquareIcon } from '@phosphor-icons/react'
 import { useConfig } from '../context/config-context'
 import { cn } from '../lib/utils'
@@ -10,9 +10,11 @@ import useConversationsStore from '../stores/conversations.store'
 import useMessagesStore from '../stores/messages.store'
 import { useInputState } from '@mantine/hooks'
 import { v4 as uuid } from 'uuid'
+import { useSession } from '../context/session-context'
 
 export default function ChatWidgetFooter() {
-  const { config, embedToken, apiUrl } = useConfig()
+  const { config, embedToken } = useConfig()
+  const { creatingNewSession } = useSession()
 
   const [message, setMessage] = useInputState('')
   
@@ -33,7 +35,7 @@ export default function ChatWidgetFooter() {
   const { processStream } = useChatStream()
 
   const sendMessage = async (text: string) => {
-    if (!text.trim() || !conversationId || isTyping) return
+    if (!text.trim() || !conversationId || isTyping || creatingNewSession) return
 
     const abortController = new AbortController()
 
@@ -63,7 +65,6 @@ export default function ChatWidgetFooter() {
 
     try {
       const response = await WidgetService.sendMessage(
-        apiUrl,
         text.trim(),
         localStorage.getItem(LocalStorageKey.SESSION_ID) || '',
         abortController.signal,
@@ -104,7 +105,7 @@ export default function ChatWidgetFooter() {
         return
       }
 
-      console.error('Error generating response:', error)
+      console.error('OfficeMate Chatbot Agent: Error generating response:', error)
       updateMessage(emptyAssistantMessage.clientId as string, {
         content: '',
         typing: false,
@@ -143,10 +144,11 @@ export default function ChatWidgetFooter() {
   // }, [conversationId])
 
   return (
-    <div className={cn(`py-2 px-4`, `border-t flex items-end gap-2`)}
+    <Box className={cn(`py-2 px-4`, `border-t flex items-end gap-2 bg-gradient-to-r from-[var(--widget-primary-color)] to-[var(--widget-secondary-color)]`)}
       style={{
-        backgroundColor: `${config.theme.primaryColor}1A`,
         borderColor: `${config.theme.primaryColor}`,
+        '--widget-primary-color': `${config.theme.primaryColor}1A`,
+        '--widget-secondary-color': `${config.theme.secondaryColor}1A`
       }}
     >
       <Textarea
@@ -164,12 +166,13 @@ export default function ChatWidgetFooter() {
           {
             input: {
               '--input-bd-focus': config.theme.primaryColor,
+              '--input-placeholder-color': 'oklch(0.556 0 0)',
             }
           }
         }
         value={message}
         onChange={setMessage}
-        disabled={isTyping}
+        disabled={isTyping || creatingNewSession}
         onKeyDown={(e) => {
           if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault()
@@ -182,16 +185,21 @@ export default function ChatWidgetFooter() {
       />
 
       {isTyping ? 
-        <SquareIcon weight='fill' className={cn(`cursor-pointer mb-2.5 flex-shrink-0`)} onClick={stopStream} 
+        <SquareIcon weight='fill' className={cn(`cursor-pointer flex-shrink-0`)} onClick={stopStream} 
+          size={20}
           style={{
-            color: config.theme.primaryColor
+            color: config.theme.secondaryColor,
+            marginBottom: 8
           }}
         />
-      : <PaperPlaneRightIcon weight="fill" className={cn(`cursor-pointer mb-2.5 flex-shrink-0`)} onClick={() => sendMessage(message)} 
+      : <PaperPlaneRightIcon weight="fill" className={cn(`cursor-pointer flex-shrink-0`)} onClick={() => sendMessage(message)}
+          size={20}
           style={{
-            color: config.theme.primaryColor
+            color: config.theme.secondaryColor,
+            opacity: creatingNewSession ? 0.7 : 1,
+            marginBottom: 8
           }}
         />}
-    </div>
+    </Box>
   )
 }

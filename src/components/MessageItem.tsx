@@ -1,16 +1,14 @@
 
-import { cn } from '../lib/utils'
-import { type ChatMessage } from '../types/message.type'
 import {
-  RobotIcon,
-  WarningCircleIcon,
+  WarningCircleIcon
 } from '@phosphor-icons/react'
 import { MessageProvider } from '../context/message-context'
+import { cn } from '../lib/utils'
+import { type ChatMessage } from '../types/message.type'
 // import { DotLottieReact } from '@lottiefiles/dotlottie-react'
-import { Avatar, Loader } from '@mantine/core'
-import { MessageMarkdownRenderer } from './markdown/MessageMarkdownRenderer'
+import { Box, Loader } from '@mantine/core'
 import { useConfig } from '../context/config-context'
-import { BlurhashImage } from './BlurhashImage'
+import { MessageMarkdownRenderer } from './markdown/MessageMarkdownRenderer'
 
 interface MessageItemProps {
   message: ChatMessage
@@ -81,25 +79,24 @@ export default function MessageItem({ message }: MessageItemProps) {
         message.role === 'user' && 'justify-end',
         message.role === 'assistant' && 'justify-start',
       )}>
-      {message.role === 'assistant' && (config.avatarUrl ? <BlurhashImage blurhash={config.avatarUrl} className='w-7 h-7 rounded-full overflow-hidden' ratio={1} /> : 
-      <RobotIcon size={28} className={cn(`border rounded-full p-1`, `flex-shrink-0`)} style={{ color: config.theme.primaryColor, borderColor: config.theme.primaryColor }} />)}
-
-      <div
+      <Box
         className={cn(
-          `flex flex-col gap-2 px-4 py-2 rounded-xl max-w-[60%]`,
-          message.role === 'user' && `text-white font-medium rounded-tr-none`,
+          `flex flex-col gap-2 px-4 py-2 rounded-xl shadow-xl`,
+          message.role === 'user' && `font-medium rounded-tr-none bg-gradient-to-br from-[var(--widget-primary-color)] to-[var(--widget-secondary-color)]`,
           message.role === 'assistant' && `rounded-tl-none border`,
         )}
         style={{
-          backgroundColor: message.role === 'user' ? config.theme.primaryColor : undefined,
-          borderColor: message.role === 'assistant' ? config.theme.primaryColor : undefined,
-          maxWidth: '60%'
+          maxWidth: 'calc(100% - 40px)',
+          borderColor: message.role === 'assistant' ? 'oklch(0.922 0 0)' : undefined,
+          '--widget-primary-color': config.theme.primaryColor,
+          '--widget-secondary-color': config.theme.secondaryColor,
+          color: message.role === 'assistant' ? config.theme.assistantTextColor : config.theme.userTextColor
         }}
         id={`message-${message.clientId}`}
       >
         <div
           className={cn(
-            'relative max-w-full text-sm overflow-auto'
+            'relative max-w-full text-xs overflow-auto'
           )}
         >
           {/* <MessageReasoning message={message} /> */}
@@ -119,9 +116,7 @@ export default function MessageItem({ message }: MessageItemProps) {
             <WarningCircleIcon size={16} />
           </div>
         )}
-      </div>
-
-      {message.role === 'user' && <Avatar color={config.theme.primaryColor} size={28} />}
+      </Box>
         
       </div>
     </MessageProvider>

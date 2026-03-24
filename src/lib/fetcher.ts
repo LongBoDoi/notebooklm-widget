@@ -16,7 +16,7 @@ export async function originFetcher(
 
   const { headers, body, method, ...rest } = options
 
-  const res = await fetch(`${endpoint}`, {
+  const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}${endpoint}`, {
     method: method || 'GET',
     // credentials: isProduction ? 'include' : 'same-origin',
     headers: {

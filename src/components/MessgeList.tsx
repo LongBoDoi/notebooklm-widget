@@ -66,7 +66,7 @@ export default function MessageList() {
   // }
 
   return (
-    <ScrollArea.Autosize
+    <ScrollArea
       className='flex-grow-1 flex flex-col items-center relative'
       scrollHideDelay={0}
       scrollbarSize={8}
@@ -74,8 +74,9 @@ export default function MessageList() {
       // onScrollCapture={handleScroll}
       // onScrollEndCapture={() => (autoScroll.current = false)}
       // threshold={10}
+      
     >
-      <div className="flex flex-col gap-2 p-4 relative" 
+      <div className="flex flex-col gap-4 p-4 relative" 
       ref={viewportRef}>
         {config.welcomeMessage && <MessageItem
           message={{
@@ -105,6 +106,6 @@ export default function MessageList() {
           )}
         </Transition>
       </Center>
-    </ScrollArea.Autosize>
+    </ScrollArea>
   )
 }

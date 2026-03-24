@@ -6,13 +6,9 @@ import { createTheme, MantineProvider } from '@mantine/core'
 
 declare global {
   interface Window {
-    OfficeMateChatbotConfig?: {
-      shadowRoot?: ShadowRoot
-      mountChatbot: (embedToken: string, apiUrl: string) => void
-      unmountChatbot: () => void
-
-      createNewSession: () => void
-    }
+    __CHATBOT_CONFIG__?: {
+      embedToken: string;
+    };
   }
 }
 
@@ -26,61 +22,65 @@ declare global {
 //   )
 // }
 
-const appContainer = document.createElement('div')
-const root = createRoot(appContainer)
+function renderApp() {
+  const config = window.__CHATBOT_CONFIG__;
 
-function mountChatbot(embedToken: string, apiUrl: string) {
-  // injectStyles(shadowRoot);
-  const shadowRoot = window.OfficeMateChatbotConfig?.shadowRoot
-  if (!shadowRoot) {
-    console.error("Shadow root not found. Please initialize the chatbot container first.");
+  if (!config) {
+    console.error("Missing chatbot config");
     return;
-  } 
+  }
 
-  appContainer.setAttribute('data-mantine-color-scheme', 'light')
-  appContainer.style.position = "fixed"
-  appContainer.style.bottom = "20px"
-  appContainer.style.right = "20px"
-  appContainer.style.zIndex = "999999"
-  appContainer.id = "officemate-chatbot-container";
-  shadowRoot.appendChild(appContainer)
+  const rootEl = document.getElementById("root");
+  if (!rootEl) {
+    console.error("Missing root element");
+    return;
+  }
 
-  const resetStyle = document.createElement("style");
-  resetStyle.textContent = `
-    :host {
-      all: initial;
-      font-family: system-ui, sans-serif;
-    }
-
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
-  `;
-  shadowRoot.appendChild(resetStyle);
-
-  // emotion cache -> inject CSS vào shadow DOM
-  // const cache = createCache({
-  //   key: 'chatbot',
-  //   container: shadow,
-  // })
+  const root = createRoot(rootEl);
 
   root.render(
-    <MantineProvider theme={createTheme({
-      defaultRadius: 'lg'
-    })} cssVariablesSelector=":host" defaultColorScheme="light">
-      <ChatWidget embedToken={embedToken} apiUrl={apiUrl} />
+    <MantineProvider
+      theme={createTheme({
+        defaultRadius: "lg",
+      })}
+      defaultColorScheme="light"
+    >
+      <ChatWidget
+        embedToken={config.embedToken}
+      />
     </MantineProvider>
-  )
+  );
+
+  // ✅ notify host
+  window.parent.postMessage({ type: "IFRAME_READY" }, "*");
+
+  // ✅ listen from host
+  window.addEventListener("message", (event) => {
+    const data = event.data || {};
+
+    if (data.type === "OPEN") {
+      window.dispatchEvent(new Event("chatbot:open"));
+    }
+
+    if (data.type === "CLOSE") {
+      window.dispatchEvent(new Event("chatbot:close"));
+    }
+
+    if (data.type === "NEW_SESSION") {
+      window.dispatchEvent(new Event("chatbot:new-session"));
+    }
+
+    if (data.type === "IDENTIFY") {
+      window.dispatchEvent(
+        new CustomEvent("chatbot:identify", {
+          detail: { token: data.token },
+        })
+      );
+    }
+  });
 }
 
-function unmountChatbot() {
-  root.unmount()
-}
-
-window.OfficeMateChatbotConfig = {
-  ...window.OfficeMateChatbotConfig,
-  mountChatbot,
-  unmountChatbot,
-  createNewSession: () => {
-  }
+// chỉ chạy trong iframe
+if (window !== window.parent) {
+  renderApp();
 }

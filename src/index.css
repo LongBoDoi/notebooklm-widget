@@ -1,16 +1,14 @@
 /* ./src/styles.css */
 @import 'tailwindcss';
-/* @import 'tw-animate-css'; */
 
 @import '@mantine/core/styles.css';
 
-/* @tailwind base;
+@tailwind base;
 @tailwind components;
-@tailwind utilities; */
+@tailwind utilities;
 
 @theme {
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
+  --color-muted-foreground: var(--muted-foreground);
   --color-secondary: var(--secondary);
 }
 
@@ -30,6 +28,7 @@
   /* --primary: #ef0604; */
   /* --primary-foreground: #fff9f9; */
   --secondary: #f8f9fa;
+  --muted-foreground: oklch(0.556 0 0);
 }
 
 /* @theme {

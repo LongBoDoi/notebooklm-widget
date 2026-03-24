@@ -10,7 +10,7 @@ import { cn } from '../lib/utils'
 import { AspectRatio } from '@mantine/core'
 import useMeasure from 'react-use-measure'
 
-const CDN_URL = 'https://vt-office-mate.s3.ap-southeast-1.amazonaws.com'
+const CDN_URL = import.meta.env.VITE_CDN_URL
 const AVAILABLE_SIZES = [300, 500, 1000, 1500, 2500]
 
 function sanitizeBlurhash(blurhash: string): string {

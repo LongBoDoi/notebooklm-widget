@@ -10,27 +10,31 @@ export interface WidgetConfig {
   position: 'BOTTOM_RIGHT' | 'BOTTOM_LEFT'
   theme: {
     primaryColor: string
+    secondaryColor: string
+    userTextColor: string
+    assistantTextColor: string
+    titleTextColor: string
     width: number
     height: number
   }
 }
 
 export const WidgetService = {
-  async getConfig(apiUrl: string, embedToken: string): Promise<WidgetConfig> {
-    const response = await api.get(`${apiUrl}/widget/${embedToken}/config`)
+  async getConfig(embedToken: string): Promise<WidgetConfig> {
+    const response = await api.get(`/widget/${embedToken}/config`)
     return response.data
   },
 
-  async createConversation(apiUrl: string, embedToken: string):Promise<Conversation & {sessionId: string}> {
-    const res = await api.post(`${apiUrl}/widget/${embedToken}/conversations`)
+  async createConversation(embedToken: string):Promise<Conversation & {sessionId: string}> {
+    const res = await api.post(`/widget/${embedToken}/conversations`)
     return {
       id: res.data.conversationId,
       sessionId: res.data.sessionId,
     } as Conversation & {sessionId: string}
   },
 
-  async sendMessage(apiUrl: string, message: string, sessionId: string, signal: AbortSignal, embedToken: string) {
-    const res = await originFetcher(`${apiUrl}/widget/${embedToken}/messages`, {
+  async sendMessage(message: string, sessionId: string, signal: AbortSignal, embedToken: string) {
+    const res = await originFetcher(`/widget/${embedToken}/messages`, {
       method: 'POST',
       body: {
         message,
@@ -42,11 +46,11 @@ export const WidgetService = {
     return res
   },
 
-  async getChatHistory(apiUrl: string, sessionId: string, embedToken: string): Promise<{
+  async getChatHistory(sessionId: string, embedToken: string): Promise<{
     conversationId: number,
     messages: ChatMessage[]
   }> {
-    const res = await api.get(`${apiUrl}/widget/${embedToken}/conversations/${sessionId}`)
+    const res = await api.get(`/widget/${embedToken}/conversations/${sessionId}`)
     return res.data
   }
 }
