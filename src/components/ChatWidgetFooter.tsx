@@ -146,9 +146,9 @@ export default function ChatWidgetFooter() {
   return (
     <Box className={cn(`py-2 px-4`, `border-t flex items-end gap-2 bg-gradient-to-r from-[var(--widget-primary-color)] to-[var(--widget-secondary-color)]`)}
       style={{
-        borderColor: `${config.theme.primaryColor}`,
-        '--widget-primary-color': `${config.theme.primaryColor}1A`,
-        '--widget-secondary-color': `${config.theme.secondaryColor}1A`
+        borderColor: `oklch(0.922 0 0)`,
+        '--widget-primary-color': `${config.theme.titlePrimaryColor}1A`,
+        '--widget-secondary-color': `${config.theme.titleSecondaryColor}1A`
       }}
     >
       <Textarea
@@ -165,7 +165,8 @@ export default function ChatWidgetFooter() {
         styles={
           {
             input: {
-              '--input-bd-focus': config.theme.primaryColor,
+              '--input-bd': 'oklch(0.922 0 0)',
+              '--input-bd-focus': 'oklch(0.922 0 0)',
               '--input-placeholder-color': 'oklch(0.556 0 0)',
             }
           }
@@ -188,14 +189,14 @@ export default function ChatWidgetFooter() {
         <SquareIcon weight='fill' className={cn(`cursor-pointer flex-shrink-0`)} onClick={stopStream} 
           size={20}
           style={{
-            color: config.theme.secondaryColor,
+            color: config.theme.titleSecondaryColor,
             marginBottom: 8
           }}
         />
       : <PaperPlaneRightIcon weight="fill" className={cn(`cursor-pointer flex-shrink-0`)} onClick={() => sendMessage(message)}
           size={20}
           style={{
-            color: config.theme.secondaryColor,
+            color: config.theme.titleSecondaryColor,
             opacity: creatingNewSession ? 0.7 : 1,
             marginBottom: 8
           }}

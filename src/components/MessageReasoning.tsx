@@ -22,20 +22,19 @@ export default function MessageReasoning({ message }: MessageItemProps) {
   })
 
   return (
-    <div className="">
-      <Accordion chevronPosition="right" variant='contained' radius='md'>
+      <Accordion chevron={null} className='mb-4'>
         <Accordion.Item value="item-1">
-          <Accordion.Control className="hover:no-underline focus-visible:ring-0 [&>svg]:hidden">
+          <Accordion.Control className="group focus-visible:ring-0 [&>svg]:hidden !px-0 !bg-transparent">
             <p
               className={cn(
                 'text-sm flex items-center gap-2',
-                message.typing ? 'text-shimmer' : 'text-gray-500 hover:text-gray-700',
+                message.typing ? 'text-shimmer' : 'text-gray-500 group-hover:text-gray-700',
               )}
             >
               <LightbulbFilamentIcon
                 size={18}
                 weight="duotone"
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 group-hover:text-gray-700"
               />
               <span>Quá trình suy luận {message.showReasoning ? `:${subText}` : ''}</span>
             </p>
@@ -43,7 +42,7 @@ export default function MessageReasoning({ message }: MessageItemProps) {
           <Accordion.Panel>
             <div className="flex flex-col space-y-2 relative ml-3">
               <div className="absolute left-0 top-4 bottom-0 border-l-1"></div>
-              {message.reasoning.map((reasoning, index) => (
+              {(message.reasoning || []).map((reasoning, index) => (
                 <div className="relative pl-5 last:pb-0" key={index}>
                   <div className="absolute h-1.5 w-1.5 -translate-x-1/2 left-px top-3 rounded-full bg-gray-500"></div>
                   <div className="space-y-1">
@@ -58,6 +57,5 @@ export default function MessageReasoning({ message }: MessageItemProps) {
           </Accordion.Panel>
         </Accordion.Item>
       </Accordion>
-    </div>
   )
 }

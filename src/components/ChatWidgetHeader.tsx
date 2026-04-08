@@ -10,10 +10,11 @@ export default function ChatWidgetHeader(props: { onClose?: () => void }) {
   } = useConfig()
 
   return (
-    <Box className="px-4 py-2 gap-2 flex items-center text-white shadow-xl border-b border-white bg-gradient-to-r from-[var(--widget-primary-color)] to-[var(--widget-secondary-color)]"
+    <Box className="px-4 py-2 gap-2 flex items-center text-white shadow-lg border-b bg-gradient-to-r from-[var(--widget-primary-color)] to-[var(--widget-secondary-color)]"
       style={{
-        '--widget-primary-color': config.theme.primaryColor,
-        '--widget-secondary-color': config.theme.secondaryColor
+        '--widget-primary-color': config.theme.titlePrimaryColor,
+        '--widget-secondary-color': config.theme.titleSecondaryColor,
+        borderColor: 'oklch(0.922 0 0)',
       }}
     >
       {config.avatarUrl ? 
@@ -25,9 +26,10 @@ export default function ChatWidgetHeader(props: { onClose?: () => void }) {
        : (
         <RobotIcon
           size={32}
-          className={`p-2 bg-white rounded-full flex-shrink-0`}
+          className={`p-2 bg-white rounded-full flex-shrink-0 border`}
           style={{
-            color: config.theme.primaryColor
+            color: '#ef0604',
+            borderColor: 'oklch(0.922 0 0)'
           }}
         />
       )}
@@ -42,6 +44,9 @@ export default function ChatWidgetHeader(props: { onClose?: () => void }) {
         size={24}
         weight="bold"
         onClick={props.onClose}
+        style={{
+          color: config.theme.titleTextColor
+        }}
       />
     </Box>
   )

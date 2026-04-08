@@ -9,6 +9,7 @@ import { type ChatMessage } from '../types/message.type'
 import { Box, Loader } from '@mantine/core'
 import { useConfig } from '../context/config-context'
 import { MessageMarkdownRenderer } from './markdown/MessageMarkdownRenderer'
+import MessageReasoning from './MessageReasoning'
 
 interface MessageItemProps {
   message: ChatMessage
@@ -47,7 +48,7 @@ export default function MessageItem({ message }: MessageItemProps) {
     if (isTyping) {
       return (
         <div className='overflow-hidden'>
-          <Loader color={config.theme.primaryColor} type='dots' size={24} />
+          <Loader color={config.theme.titlePrimaryColor} type='dots' size={24} />
         </div>
       )
     }
@@ -81,25 +82,25 @@ export default function MessageItem({ message }: MessageItemProps) {
       )}>
       <Box
         className={cn(
-          `flex flex-col gap-2 px-4 py-2 rounded-xl shadow-xl`,
+          `flex flex-col gap-2 px-4 py-2 rounded-xl shadow-md`,
           message.role === 'user' && `font-medium rounded-tr-none bg-gradient-to-br from-[var(--widget-primary-color)] to-[var(--widget-secondary-color)]`,
           message.role === 'assistant' && `rounded-tl-none border`,
         )}
         style={{
           maxWidth: 'calc(100% - 40px)',
           borderColor: message.role === 'assistant' ? 'oklch(0.922 0 0)' : undefined,
-          '--widget-primary-color': config.theme.primaryColor,
-          '--widget-secondary-color': config.theme.secondaryColor,
+          '--widget-primary-color': config.theme.userPrimaryColor,
+          '--widget-secondary-color': config.theme.userSecondaryColor,
           color: message.role === 'assistant' ? config.theme.assistantTextColor : config.theme.userTextColor
         }}
         id={`message-${message.clientId}`}
       >
         <div
           className={cn(
-            'relative max-w-full text-xs overflow-auto'
+            'relative max-w-full text-sm overflow-auto'
           )}
         >
-          {/* <MessageReasoning message={message} /> */}
+          <MessageReasoning message={message} />
 
           {message.content
             ? renderMessageContent(message.content, false)

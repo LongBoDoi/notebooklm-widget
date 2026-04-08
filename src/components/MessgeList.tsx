@@ -99,8 +99,23 @@ export default function MessageList() {
         <Transition transition="slide-up" mounted={inViewport}>
           {(transitionStyles) => (
             
-            <Button color={config.theme.primaryColor} leftSection={<CaretDoubleDownIcon weight="bold" />} onClick={() => scrollToBottom('smooth')} style={transitionStyles}
-            className='!text-white'>
+            <Button
+              variant='gradient' 
+              gradient={{
+                from: config.theme.titlePrimaryColor,
+                to: config.theme.titleSecondaryColor,
+                deg: 90
+              }}
+              autoContrast
+              leftSection={<CaretDoubleDownIcon weight="bold" />} 
+              onClick={() => scrollToBottom('smooth')} 
+              style={{
+                ...transitionStyles,
+                borderColor: 'oklch(0.922 0 0)',
+                color: config.theme.titleTextColor
+              }}
+              className='!shadow-lg border'
+            >
               Đi tới hiện tại
             </Button>
           )}

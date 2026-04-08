@@ -9,11 +9,15 @@ export interface WidgetConfig {
   welcomeMessage: string
   position: 'BOTTOM_RIGHT' | 'BOTTOM_LEFT'
   theme: {
-    primaryColor: string
-    secondaryColor: string
+    titlePrimaryColor: string
+    titleSecondaryColor: string
+    titleTextColor: string
+
+    userPrimaryColor: string
+    userSecondaryColor: string
     userTextColor: string
     assistantTextColor: string
-    titleTextColor: string
+    
     width: number
     height: number
   }
